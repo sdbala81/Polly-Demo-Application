@@ -10,6 +10,22 @@ public class InventoryController : Controller
 {
     private static int _requestCount;
 
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> Get(string productId)
+    {
+        await Task.Delay(1000); // simulate some data processing by delaying for 100 milliseconds 
+        _requestCount++;
+
+        var product = _products.FirstOrDefault(p => p.Id == productId);
+
+        return _requestCount % 2 == 0
+            ? // only one of out four requests will succeed
+            Ok(product)
+            : StatusCode((int)HttpStatusCode.InternalServerError, "Something went wrong");
+
+     
+    }
+    
     private readonly Product[] _products =
     {
         new()
@@ -31,16 +47,4 @@ public class InventoryController : Controller
             Quantity = 25
         }
     };
-
-    [HttpGet("{productId}")]
-    public async Task<IActionResult> Get(string productId)
-    {
-        await Task.Delay(100); // simulate some data processing by delaying for 100 milliseconds 
-        _requestCount++;
-
-        var product = _products.FirstOrDefault(p => p.Id == productId);
-
-        return Ok(product);
-     
-    }
 }
