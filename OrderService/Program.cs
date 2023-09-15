@@ -26,7 +26,7 @@ var services = builder.Services;
 
 // Create the retry policy we want
 var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError() // HttpRequestException, 5XX and 408  
-    .RetryAsync(4);
+    .WaitAndRetryAsync(4, retryAttempts => TimeSpan.FromSeconds(Math.Pow(5, retryAttempts)/2));
 
 // Register the InventoryClient with Polly policies
 services.AddHttpClient<IInventoryClient, InventoryClient>().ConfigureHttpClient(
