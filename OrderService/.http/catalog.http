@@ -2,7 +2,16 @@
 GET http://localhost:6000/api/orders/1
 Content-Type: application/json
 
+### 2. Get Product By Name
+GET http://localhost:6000/api/orders/name/Apples
+Content-Type: application/json
 
-### 2. Inventory
-GET http://localhost:5000/api/Inventory/1
+
+### 3. Inventory
+GET http://localhost:5000/api/inventory/1
+Content-Type: application/json
+
+
+### 4. Inventory By Name
+GET http://localhost:5000/api/inventory/name/soap
 Content-Type: application/json

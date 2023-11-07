@@ -40,9 +40,21 @@ public class InventoryController : Controller
 
         var product = _products.FirstOrDefault(p => p.Id == productId);
 
-        return _requestCount % 5 == 0
+        return _requestCount % 4 == 0
             ? // only one of out four requests will succeed
             Ok(product)
             : StatusCode((int)HttpStatusCode.InternalServerError, "Something went wrong");
+    }
+
+    [HttpGet("name/{productName}")]
+    public async Task<IActionResult> GetByName(string productName)
+    {
+        await Task.Delay(1000); // simulate some data processing by delaying for 100 milliseconds 
+
+        // var product = _products.FirstOrDefault(p => p.Name == productName);
+        // return Ok(product);
+
+        return StatusCode((int)HttpStatusCode.InternalServerError,
+            $"Something went wrong when getting prodict by name when getting {productName}");
     }
 }

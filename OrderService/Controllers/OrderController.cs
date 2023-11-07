@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using OrderService.Clients;
+﻿using Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace OrderService.Controllers;
 
@@ -7,18 +7,35 @@ namespace OrderService.Controllers;
 [Route("api/[controller]s")]
 public class OrderController : Controller
 {
-    private readonly IInventoryClient _inventoryClient;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public OrderController(IInventoryClient inventoryClient)
+    public OrderController(IHttpClientFactory httpClientFactory)
     {
-        _inventoryClient = inventoryClient;
+        _httpClientFactory = httpClientFactory;
     }
 
-    [HttpGet("{productId}")]
-    public async Task<IActionResult> Get(string productId)
-    {
-        var product = await _inventoryClient.GetProduct(productId);
 
-        return Ok(product);
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> GetById(string productId)
+    {
+        //var product = await _inventoryClient.GetProductById(productId);
+
+        return Ok(new Product { Id = productId, Name = "Apples", Quantity = 12 });
+    }
+
+    [HttpGet("name/{productName}")]
+    public async Task<IActionResult> GetByName(string productName)
+    {
+        var httpClient = _httpClientFactory.CreateClient("InventoryService");
+        var httpResponseMessage = await httpClient.GetAsync($"api/inventory/name/{productName}");
+
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            var product = await httpResponseMessage.Content.ReadFromJsonAsync<Product>();
+            return Ok(product);
+        }
+
+        return StatusCode((int)httpResponseMessage.StatusCode, await httpResponseMessage.Content.ReadAsStringAsync());
     }
 }
