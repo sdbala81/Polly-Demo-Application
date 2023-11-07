@@ -25,7 +25,7 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-services.ConfigurePolly();
+services.ConfigurePollyWithHttpClient();
 
 var app = builder.Build();
 

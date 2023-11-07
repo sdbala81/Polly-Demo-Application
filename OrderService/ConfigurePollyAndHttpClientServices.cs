@@ -2,7 +2,7 @@
 
 namespace OrderService;
 
-public static class ConfigureServices
+public static class ConfigurePollyAndHttpClientServices
 {
     private static readonly IAsyncPolicy<HttpResponseMessage> fallbackPolicy =
         Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
@@ -17,7 +17,7 @@ public static class ConfigureServices
         Policy.WrapAsync(fallbackPolicy, httpWaitAndRetryPolicy);
 
 
-    public static void ConfigurePolly(this IServiceCollection services)
+    public static void ConfigurePollyWithHttpClient(this IServiceCollection services)
     {
         services.AddHttpClient("InventoryService", client =>
         {
