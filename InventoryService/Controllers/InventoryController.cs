@@ -1,5 +1,7 @@
 ﻿using System.Net;
+
 using Domain;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryService.Controllers;
@@ -51,10 +53,8 @@ public class InventoryController : Controller
     {
         await Task.Delay(1000); // simulate some data processing by delaying for 100 milliseconds 
 
-        // var product = _products.FirstOrDefault(p => p.Name == productName);
-        // return Ok(product);
-
-        return StatusCode((int)HttpStatusCode.InternalServerError,
+        return StatusCode(
+            (int)HttpStatusCode.InternalServerError,
             $"Something went wrong when getting prodict by name when getting {productName}");
     }
 }

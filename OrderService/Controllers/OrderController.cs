@@ -1,4 +1,5 @@
 ﻿using Domain;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace OrderService.Controllers;
@@ -14,13 +15,20 @@ public class OrderController : Controller
         _httpClientFactory = httpClientFactory;
     }
 
-
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetById(string productId)
     {
-        //var product = await _inventoryClient.GetProductById(productId);
+        var httpClient = _httpClientFactory.CreateClient("InventoryService");
+        var httpResponseMessage = await httpClient.GetAsync($"api/inventory/{productId}");
 
-        return Ok(new Product { Id = productId, Name = "Apples", Quantity = 12 });
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            var product = await httpResponseMessage.Content.ReadFromJsonAsync<Product>();
+
+            return Ok(product);
+        }
+
+        return StatusCode((int)httpResponseMessage.StatusCode, await httpResponseMessage.Content.ReadAsStringAsync());
     }
 
     [HttpGet("name/{productName}")]
@@ -29,10 +37,10 @@ public class OrderController : Controller
         var httpClient = _httpClientFactory.CreateClient("InventoryService");
         var httpResponseMessage = await httpClient.GetAsync($"api/inventory/name/{productName}");
 
-
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var product = await httpResponseMessage.Content.ReadFromJsonAsync<Product>();
+
             return Ok(product);
         }
 
